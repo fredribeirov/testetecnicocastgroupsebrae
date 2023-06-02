@@ -1,4 +1,6 @@
-﻿using TCastGroupSebrae.API.Interface;
+﻿using Microsoft.EntityFrameworkCore;
+using System.Formats.Asn1;
+using TCastGroupSebrae.API.Interface;
 using TCastGroupSebrae.API.Model;
 
 namespace TCastGroupSebrae.API.Repository
@@ -10,30 +12,36 @@ namespace TCastGroupSebrae.API.Repository
         {
             _castGroupSebraeAPIContext = castGroupSebraeAPIContext;
         }
-        public Conta Atualizar(Conta conta)
+        public async void Atualizar(Conta conta)
         {
-            throw new NotImplementedException();
+            _castGroupSebraeAPIContext.Entry(conta).State = EntityState.Modified;
+            _castGroupSebraeAPIContext.SaveChangesAsync();
         }
 
-        public Conta BuscaPorId(int id)
+        public async Task<Conta> BuscaPorId(int id)
         {
-            return _castGroupSebraeAPIContext.Conta.Find(id);
+            return await _castGroupSebraeAPIContext.Conta.FindAsync(id);
            
         }
+ 
 
-        public List<Conta> BuscaTodos()
+        public async Task<bool> Excluir(int id)
         {
-            return _castGroupSebraeAPIContext.Conta.ToList();
+            var conta = _castGroupSebraeAPIContext.Conta.Find(id);
+            if(conta != null)
+            {
+                _castGroupSebraeAPIContext.Conta.Remove(conta);
+                _castGroupSebraeAPIContext.SaveChangesAsync();
+                return true;
+            }
+            return false;
         }
 
-        public Conta Excluir(int id)
+        public async void Inserir(Conta conta)
         {
-            throw new NotImplementedException();
-        }
-
-        public Conta Inserir(Conta conta)
-        {
-            throw new NotImplementedException();
+            _castGroupSebraeAPIContext.Conta.Add(conta);
+            await _castGroupSebraeAPIContext.SaveChangesAsync();
+             
         }
     }
 }

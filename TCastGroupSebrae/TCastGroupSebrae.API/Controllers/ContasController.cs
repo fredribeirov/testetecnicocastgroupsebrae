@@ -21,33 +21,24 @@ namespace TCastGroupSebrae.API.Controllers
             _contaRepositorio = contaRepositorio;
         }
 
-        // GET: api/Contas
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<Conta>>> GetConta()
-        {
-          if (_context.Conta == null)
-          {
-              return NotFound();
-          }
-            return await _context.Conta.ToListAsync();
-        }
+       
 
         // GET: api/Contas/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Conta>> GetConta(int id)
         {
-          if (_context.Conta == null)
+          if (_contaRepositorio == null)
           {
               return NotFound();
           }
-            var conta = await _context.Conta.FindAsync(id);
+            var conta = await   _contaRepositorio.BuscaPorId(id);
 
             if (conta == null)
             {
                 return NotFound();
             }
 
-            return conta;
+            return Ok(conta);
         }
 
         // PUT: api/Contas/5
@@ -59,23 +50,15 @@ namespace TCastGroupSebrae.API.Controllers
             {
                 return BadRequest();
             }
-
-            _context.Entry(conta).State = EntityState.Modified;
-
             try
             {
-                await _context.SaveChangesAsync();
+                _contaRepositorio.Atualizar(conta);
             }
-            catch (DbUpdateConcurrencyException)
+            catch (Exception ex)
             {
-                if (!ContaExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                return BadRequest();
+                throw;
+                
             }
 
             return NoContent();
@@ -86,12 +69,11 @@ namespace TCastGroupSebrae.API.Controllers
         [HttpPost]
         public async Task<ActionResult<Conta>> PostConta(Conta conta)
         {
-          if (_context.Conta == null)
+          if (_contaRepositorio == null)
           {
-              return Problem("Entity set 'TCastGroupSebraeAPIContext.Conta'  is null.");
+              return Problem("Respositorio não pode ser nulo.");
           }
-            _context.Conta.Add(conta);
-            await _context.SaveChangesAsync();
+            _contaRepositorio.Inserir(conta);
 
             return CreatedAtAction("GetConta", new { id = conta.Id }, conta);
         }
@@ -100,25 +82,13 @@ namespace TCastGroupSebrae.API.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteConta(int id)
         {
-            if (_context.Conta == null)
-            {
-                return NotFound();
-            }
-            var conta = await _context.Conta.FindAsync(id);
-            if (conta == null)
-            {
-                return NotFound();
-            }
-
-            _context.Conta.Remove(conta);
-            await _context.SaveChangesAsync();
-
+            
+            var deletado = await _contaRepositorio.Excluir(id);           
             return NoContent();
+           
+ 
         }
 
-        private bool ContaExists(int id)
-        {
-            return (_context.Conta?.Any(e => e.Id == id)).GetValueOrDefault();
-        }
+        
     }
 }
