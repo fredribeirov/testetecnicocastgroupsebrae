@@ -7,12 +7,19 @@ using TCastGroupSebrae.API.Model;
 
     public class TCastGroupSebraeAPIContext : DbContext
     {
-        public TCastGroupSebraeAPIContext (DbContextOptions<TCastGroupSebraeAPIContext> options)
+    private Func<object, object> value;
+
+    public TCastGroupSebraeAPIContext (DbContextOptions<TCastGroupSebraeAPIContext> options)
             : base(options)
         {
         }
 
-        public DbSet<TCastGroupSebrae.API.Model.ViaCep> ViaCep { get; set; } = default!;
+    public TCastGroupSebraeAPIContext(Func<object, object> value)
+    {
+        this.value = value;
+    }
+
+    public DbSet<TCastGroupSebrae.API.Model.ViaCep> ViaCep { get; set; } = default!;
 
         public DbSet<TCastGroupSebrae.API.Model.Conta> Conta { get; set; }
     }
