@@ -13,4 +13,6 @@ using TCastGroupSebrae.API.Model;
         }
 
         public DbSet<TCastGroupSebrae.API.Model.ViaCep> ViaCep { get; set; } = default!;
+
+        public DbSet<TCastGroupSebrae.API.Model.Conta> Conta { get; set; }
     }
